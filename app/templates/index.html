@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <form action="{{ url_for('main.add') }}" method="POST">
+        <input type="text" name="title" placeholder="Новая задача" required>
+        <input type="datetime-local" name="due_time" id="due_time">
+        <button type="submit">Добавить</button>
+    </form>
+    <div class="sort-controls">
+        <span>Сортировка:</span>
+         <a href="{{ url_for('main.index', sort='time_asc') }}"
+       class="sort-btn {% if current_sort == 'time_asc' %}current-sort{% endif %}">
+       По времени (↑)
+    </a>
+    <a href="{{ url_for('main.index', sort='time_desc') }}"
+       class="sort-btn {% if current_sort == 'time_desc' %}current-sort{% endif %}">
+       По времени (↓)
+    </a>
+    <a href="{{ url_for('main.index', sort='default') }}"
+       class="sort-btn {% if current_sort == 'default' %}current-sort{% endif %}">
+       По умолчанию
+    </a>
+    </div>
+    <ul>
+        {% for task in tasks %}
+        <li class="{% if task.overdue %}overdue{% endif %}">
+            <span style="text-decoration: {% if task.is_completed %}line-through{% else %}none{% endif %}">
+                {{ task.title }}
+                {% if task.due_time %}
+                <span class="due-time">
+                (до {{ task.due_time.strftime('%d.%m.%Y %H:%M') }})
+                </span>
+            {% endif %}
+            </span>
+            <div class="task-actions">
+                <a href="{{ url_for('main.complete', task_id=task.id) }}">✓</a>
+                <a href="{{ url_for('main.delete', task_id=task.id) }}">✗</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
